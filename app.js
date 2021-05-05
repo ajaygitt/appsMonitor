@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var app = express();
 const db=require('./models/connection')
-
+var session=require('express-session')
 
 
 // view engine setup
@@ -16,6 +16,11 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(session({
+  secret: 'keyboard cat',
+ cookie:{maxAge:5000000}
+}))
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
