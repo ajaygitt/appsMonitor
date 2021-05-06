@@ -7,6 +7,16 @@
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -41,199 +51,267 @@
 
 
   <div id="home">
-<button class="btn btn-primary" style="margin-left: 80%;" class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#modal"> Add new  Application</button>
- 
+    <button class="btn btn-primary" style="margin-left: 80%;" class="btn btn-success btn-block mb-2" data-toggle="modal"
+      data-target="#modal"> Add new Application</button>
 
- <div id="modal" class="modal fade" data-backdrop="true">
-     <div class="modal-dialog">
-         <div class="modal-content">
-             <div class="modal-header">
-                 <div class="modal-title text-md">This will be your modal title</div> <button class="close" data-dismiss="modal">&times;</button>
-             </div>
-             <div class="modal-body">
-                 <div class="p-4 text-center">
-<form id="addApp" name="addApp">
 
-<label for="app name">Application name</label> <input type="text" id="appName" name="appName"  class="form-control" placeholder="Application Name">
-<label for="package name">Package Name</label><input type="text" name="packageName" id="packageName" class="form-control"value="com.">
+    <div id="modal" class="modal fade" data-backdrop="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title text-md">This will be your modal title</div> <button class="close"
+              data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="p-4 text-center">
+              <form id="addApp" name="addApp">
 
-                 </div>
-             </div>
-             <div class="modal-footer"> <button type="button" class="btn btn-light" data-dismiss="modal">Close</button> <button type="submit" class="btn btn-primary">Add this App</button> </div>
-         </div>
-     </form>
-     </div>
- </div>
- 
- 
- 
- 
- 
- 
- 
- 
-  <table id="example" class="table table-striped table-bordered" style="width:100%">
-    <thead>
-      <tr>
-        <th>Application Name</th>
-        <th>Package name</th>
-        <th>added on</th>
-        <th> <button>delete</button>  </th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each applications}}
-      <tr>
-        <td>{{this.appName}}</td>
-        <td>{{this.packageName}}</td>
-        <td>{{this.date}} @ {{this.time}}</td>
-        <td> <button class="btn " onclick="deleteApp()">delete</button> </td>
-      </tr>
+                <label for="app name">Application name</label> <input type="text" id="appName" name="appName"
+                  class="form-control" placeholder="Application Name">
+                <label for="package name">Package Name</label><input type="text" name="packageName" id="packageName"
+                  class="form-control" value="com.">
+
+            </div>
+          </div>
+          <div class="modal-footer"> <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add this App</button> </div>
+        </div>
+        </form>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+    <table id="example" class="table table-striped table-bordered" style="width:100%">
+      <thead>
+        <tr>
+          <th>Application Name</th>
+          <th>Package name</th>
+          <th>added on</th>
+          <th> delete </th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each applications}}
+        <tr>
+          <td>{{this.appName}}</td>
+          <td>{{this.packageName}}</td>
+          <td>{{this.date}} @ {{this.time}}</td>
+          <td> <button class="btn " onclick="deleteApp()">delete</button> </td>
+        </tr>
+        {{/each}}
+      </tbody>
+
+    </table>
+  </div>
+
+  {{!-- home end --}}
+
+
+
+
+
+
+
+
+
+
+
+
+  {{!-- schedule start --}}
+  <div id="schedules" style="display: none;">
+
+    <h3 style="padding-left: 43%; di">Schedules</h3>
+
+
+
+
+
+    <button class="btn btn-primary" style="margin-left: 80%;" class="btn btn-success btn-block mb-2" data-toggle="modal"
+      data-target="#scheduleModal"> Add new Scehdyle</button>
+
+    {{!-- modal --}}
+    <div id="scheduleModal" class="modal fade" data-backdrop="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title text-md">Add a new schedule Here</div> <button class="close"
+              data-dismiss="#scheduleModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="p-4 text-center">
+              <form id="submitSchedule" name="submitSchedule" method="POST" action="/addSchedule">
+
+                <div class="row">
+                  <div class="col-lg-6 mx-auto">
+                    <label class="text-black mb-3 lead">select the day(s)</label>
+                    <!-- Multiselect dropdown -->
+                    <select multiple data-style="bg-white rounded-pill px-4 py-3 shadow-sm " name="days" id="days"
+                      class="selectpicker w-100">
+                      <option value="Mon">Monday</option>
+                      <option value="Tue">Tuesday</option>
+                      <option value="Wed">Wednesday</option>
+                      <option value="Thu">Thursday</option>
+                      <option value="Fri">Friday</option>
+                      <option value="Sat">Saturday</option>
+                      <option value="Sun">Sunday</option>
+                    </select><!-- End -->
+                  </div>
+                </div>
+
+
+
+                <div class="row">
+
+                  <label for="package name">From</label><input type="time" name="fromTime" id="fromTime"
+                    class="form-control" value="com.">
+                  <label for="package name">To</label><input type="time" name="toTime" id="toTime" class="form-control"
+                    value="com.">
+
+
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer"> <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add this App</button> </div>
+        </div>
+        </form>
+      </div>
+    </div>
+
+
+
+
+
+
+
+    <div style="padding-left: 5%;"></div>
+    <div class="row" style="padding-left: 5%;">
+
+      {{#each schedules}}
+      <div class="card" style="width: 18rem;">
+
+        <div style="background-color:lightblue;">
+          <h5>Work time</h5>
+
+
+        </div>
+
+        <div class="card-body">
+
+          <div class="row">
+            <span class="dot" id="monday">
+              <p class="text-inside">M</p>
+            </span>
+            <span class="dot" id="tuesday">
+              <p class="text-inside"> T </p>
+            </span>
+            <span class="dot" id="wednesday">
+              <p class="text-inside">W</p>
+            </span>
+            <span class="dot" id="thursday">
+              <p class="text-inside">T</p>
+            </span>
+
+            <span class="dot" id="friday">
+              <p class="text-inside">F</p>
+            </span>
+            <span class="dot" id="saturday">
+              <p class="text-inside">S</p>
+            </span>
+
+            <span class="dot" id="sunday">
+              <p class="text-inside">S</p>
+            </span>
+          </div>
+
+          <p class="card-text"> From : {{this.fromTime}}  To:{{this.toTime}} </p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
       {{/each}}
-    </tbody>
-
-</table>
-</div>
-
-    {{!-- home end --}}
-
-
-
-
-
-
-
-
-
-
-
-
-    {{!-- schedule start --}}
-    <div id="schedules" style="display: none;">
-
-      <h3 style="padding-left: 43%; di">Schedules</h3>
-
-      <div style="padding-left: 5%;"></div>
-      <div class="row" style="padding-left: 5%;">
-        <div class="card" style="width: 18rem;">
-
-          <div style="background-color:lightblue;">
-            <h5>Work time</h5>
-
-
-          </div>
-
-          <div class="card-body">
-
-            <div class="row">
-              <span class="dot" id="monday">
-                <p class="text-inside">M</p>
-              </span>
-              <span class="dot" id="tuesday">
-                <p class="text-inside"> T </p>
-              </span>
-              <span class="dot" id="wednesday">
-                <p class="text-inside">W</p>
-              </span>
-              <span class="dot" id="thursday">
-                <p class="text-inside">T</p>
-              </span>
-
-              <span class="dot" id="friday">
-                <p class="text-inside">F</p>
-              </span>
-              <span class="dot" id="saturday">
-                <p class="text-inside">S</p>
-              </span>
-
-              <span class="dot" id="sunday">
-                <p class="text-inside">S</p>
-              </span>
-            </div>
-
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-              content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
-
-
-
-
-
-
     </div>
-    {{!-- schedule end --}}
-
-
-    <!------restrictions start ---------->
-
-    <div id="restrictions" style="display:none">
-
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 ">
-            <nav>
-              <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
-                  aria-controls="nav-home" aria-selected="true">Home</a>
-                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
-                  aria-controls="nav-profile" aria-selected="false">Profile</a>
-                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
-                  aria-controls="nav-contact" aria-selected="false">Contact</a>
-                <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab"
-                  aria-controls="nav-about" aria-selected="false">About</a>
-              </div>
-            </nav>
-            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-              <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                x labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
-                incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
-                aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
-                do
-                nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
-                sit
-                culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
-                duis
-                occaecat ex.
-              </div>
 
 
 
 
-              <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                aaaaaaaaaaaaaaa
-              </div>
-              <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                aaaaaaaaaaaateur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
-                incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
-                aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
-                do
-                nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
-                sit
-                culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
-                duis
-                occaecat ex.
-              </div>
+
+  </div>
+  {{!-- schedule end --}}
 
 
+  <!------restrictions start ---------->
 
-              <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat
-                veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit
-                non
-                irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim
-                occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit.
-                Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit
-                occaecat anim ullamco ad duis occaecat ex.
-              </div>
+  <div id="restrictions" style="display:none">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 ">
+          <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+                aria-controls="nav-home" aria-selected="true">Home</a>
+              <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+                aria-controls="nav-profile" aria-selected="false">Profile</a>
+              <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
+                aria-controls="nav-contact" aria-selected="false">Contact</a>
+              <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab"
+                aria-controls="nav-about" aria-selected="false">About</a>
+            </div>
+          </nav>
+          <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+              x labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
+              incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
+              aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
+              do
+              nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
+              sit
+              culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
+              duis
+              occaecat ex.
             </div>
 
+
+
+
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+              aaaaaaaaaaaaaaa
+            </div>
+            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+              aaaaaaaaaaaateur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
+              incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
+              aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
+              do
+              nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
+              sit
+              culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
+              duis
+              occaecat ex.
+            </div>
+
+
+
+            <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+              Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat
+              veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit
+              non
+              irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim
+              occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit.
+              Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit
+              occaecat anim ullamco ad duis occaecat ex.
+            </div>
           </div>
+
         </div>
       </div>
     </div>
+  </div>
 </div>
 
 
@@ -250,8 +328,8 @@
 <script>
 
   function schedules() {
-    
-       $('#home').hide()
+
+    $('#home').hide()
     $('#restrictions').hide()
     $('#schedules').show()
   }
@@ -262,69 +340,104 @@
 
 
   }
-function addNewApplication(){
+  function addNewApplication() {
 
-  alert('')
-}
+    alert('')
+  }
 
   //datatable
 
   $(document).ready(function () {
     $('#example').DataTable();
   });
+  $(document).ready(function () {
+    $('input.timepicker').timepicker({});
+  });
 
-
+  $(function () {
+    $('.selectpicker').selectpicker();
+  });
 
 
 
   $("#addApp").validate({
-            rules: {
-				appName:{
-                      required:true,
-					  minlength:3
-				},
-                packageName:{
+    rules: {
+      appName: {
+        required: true,
+        minlength: 3
+      },
+      packageName: {
 
-                    required:true,
-                    minlength:3
-                }
-			},
-
-
-        submitHandler: function (my_form) {
-
-
-
-let appName=$('#appName').val()
-let packageName=$('#packageName').val()
-
-$.ajax({
-
-    url:'/addApplication',
-    method:'post',
-    data:{
-        appName,
-        packageName
+        required: true,
+        minlength: 3
+      }
     },
-    success:(response)=>{
-
-if(response.status==true)
-{
-     alert('Application inserted')
-    window.location.reload();
-}
-else
-{
-  alert('An application with the same name already exists')
-}
-    }
 
 
-})
+    submitHandler: function (my_form) {
 
 
+
+      let appName = $('#appName').val()
+      let packageName = $('#packageName').val()
+
+      $.ajax({
+
+        url: '/addApplication',
+        method: 'post',
+        data: {
+          appName,
+          packageName
+        },
+        success: (response) => {
+
+          if (response.status == true) {
+            alert('Application inserted')
+            window.location.reload();
+          }
+          else {
+            alert('An application with the same name already exists')
+          }
         }
+
+
+      })
+
+
+    }
   })
+
+
+
+
+
+
+
+
+
+  $("#submitSchedule").validate({
+    rules: {
+      days: {
+        required: true
+      },
+      fromTime: {
+
+        required: true
+      },
+      toTime: {
+        required: true
+      }
+    },
+
+
+    
+  })
+
+
+
+
+
+
 
 
 
@@ -364,9 +477,22 @@ else
 
   }
 
-.container {
+  .container {
     margin-top: 100px
-}
+  }
+
+
+  .bootstrap-select .bs-ok-default::after {
+    width: 0.3em;
+    height: 0.6em;
+    border-width: 0 0.1em 0.1em 0;
+    transform: rotate(45deg) translateY(0.5rem);
+  }
+
+  .btn.dropdown-toggle:focus {
+    outline: none !important;
+  }
+
   .dot {
     height: 25px;
     width: 25px;

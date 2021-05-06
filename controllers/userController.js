@@ -1,149 +1,253 @@
-const { Forbidden } = require('http-errors')
-const { USER_COLLECTION, APP_COLLECTION } = require('../models/collections')
-const db=require('../models/connection')
-const collection=require('../models/connection')
-const bcrypt=require('bcrypt')
-const { response } = require('express')
-const moment=require('moment')
+const { Forbidden } = require("http-errors");
+const { USER_COLLECTION, APP_COLLECTION } = require("../models/collections");
+const db = require("../models/connection");
+const collection = require("../models/connection");
+const bcrypt = require("bcrypt");
+const { response } = require("express");
+const moment = require("moment");
 
+module.exports = {
+  registerUser: (data) => {
+    let response = {};
 
-module.exports={
+    return new Promise(async (resolve, reject) => {
+      console.log("datata", data);
 
-    registerUser:(data)=>{
+      let userNameExists = await db
+        .get()
+        .collection(USER_COLLECTION)
+        .findOne({ Username: data.username });
+      if (userNameExists) {
+        response.status = false;
+        resolve(response);
+      } else {
+        let passwordEncrypt = await bcrypt.hash(data.password, 10);
 
-        let response={}
+        db.get()
+          .collection(USER_COLLECTION)
+          .insertOne({ Username: data.username, Password: passwordEncrypt })
+          .then((result) => {
+            response.status = true;
+            response.user = result.ops[0]._id;
 
-        return new Promise(async(resolve,reject)=>{
-            console.log("datata",data);
-
-           let userNameExists=await db.get().collection(USER_COLLECTION).findOne({Username:data.username})
-if(userNameExists)
-{
-    response.status=false
-    resolve(response)
-}
-else{
-
-    
-    let passwordEncrypt=await bcrypt.hash(data.password,10)
-
-     db.get().collection(USER_COLLECTION).insertOne({Username:data.username,Password:passwordEncrypt}).then((result)=>{
-
-response.status=true
-response.user=result.ops[0]._id
-
-resolve(response);
-
-     })
-
-
-}
-
-
-
-
-
-
-        })
-    },
-
-    userLogin:(data)=>{
-        let response={}
-        return new Promise(async(resolve,reject)=>{
-          let user=await  db.get().collection(USER_COLLECTION).findOne({Username:data.username})
-      if(user)
-      {
-     let status=   await bcrypt.compare(data.password, user.Password);
-
-     if(status==true)
-     {
-         response.user=user._id
-         response.status=true
-resolve(response)
-     }
-     else
-     {
-
-        response.status=false
-         resolve(response)
-     }
+            resolve(response);
+          });
       }
-      else
-      {
-        response.status=false
-          resolve(response)
+    });
+  },
+
+  userLogin: (data) => {
+    let response = {};
+    return new Promise(async (resolve, reject) => {
+      let user = await db
+        .get()
+        .collection(USER_COLLECTION)
+        .findOne({ Username: data.username });
+      if (user) {
+        let status = await bcrypt.compare(data.password, user.Password);
+
+        if (status == true) {
+          response.user = user._id;
+          response.status = true;
+          resolve(response);
+        } else {
+          response.status = false;
+          resolve(response);
+        }
+      } else {
+        response.status = false;
+        resolve(response);
       }
-        })
-    },
+    });
+  },
 
+  addApplicaton: (data, userId) => {
+    let date = moment(new Date()).format("DD-MM-YYYY");
+    let time = moment(new Date()).format("h:mma");
+    let appdata = {
+      date: date,
+      time: time,
+      appName: data.appName,
+      packageName: data.packageName,
+      type: "not-scheduled",
+      status: 0,
+    };
 
-
-
-    addApplicaton:(data,userId)=>{
-
-let date=moment(new Date()).format('DD-MM-YYYY')
-let time=moment(new Date()).format('h:mma')
-let appdata={
-    date:date,
-    time:time,
-    appName:data.appName,
-    packageName:data.packageName
-}
-
-        return new Promise(async(resolve,reject)=>{
-      let response={}
-     let exist=await       db.get().collection('applications').findOne({userId:userId})
-console.log("Ee",exist);
-     if(exist)
-     {
+    return new Promise(async (resolve, reject) => {
+      let response = {};
+      let exist = await db
+        .get()
+        .collection("applications")
+        .findOne({ userId: userId });
+      console.log("Ee", exist);
+      if (exist) {
         let appExists = await exist.appName.findIndex(
-            (a) => a.appName == data.appName
-          );
+          (a) => a.appName == data.appName
+        );
 
-          console.log(appExists);
-if(appExists==-1)
-{
-    console.log('app not exists');
+        console.log(appExists);
+        if (appExists == -1) {
+          console.log("app not exists");
 
-    db.get().collection(APP_COLLECTION).updateOne({userId:userId},
-        {
-            $push:{
-                appName:appdata
+          db.get()
+            .collection(APP_COLLECTION)
+            .updateOne(
+              { userId: userId },
+              {
+                $push: {
+                  appName: appdata,
+                },
+              }
+            );
+          response.status = true;
+          resolve(response);
+        } else {
+          console.log("app exisys", appExists);
+          response.status = false;
+          resolve(response);
+        }
+      } else {
+        db.get()
+          .collection(APP_COLLECTION)
+          .insertOne({
+            userId: userId,
+            appName: [appdata],
+            date: date,
+            time: time,
+          });
+        response.status = true;
+        resolve(response);
+      }
+    });
+  },
+
+  getAllApplications: (userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(APP_COLLECTION)
+        .findOne({ userId: userId })
+        .then((result) => {
+          if (result) {
+            resolve(result.appName);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+  },
+
+  addSchedule: (data, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let scheduleObj = {
+        fromTime: data.fromTime,
+        toTime: data.toTime,
+        dates: data.days,
+      };
+
+      let exist = await db
+        .get()
+        .collection("schedule")
+        .findOne({ userId: userId });
+
+      if (exist) {
+        console.log("exist");
+        db.get()
+          .collection("schedule")
+          .updateOne(
+            { userId: userId },
+            {
+              $push: {
+                schedule: scheduleObj,
+              },
             }
-        })
-    response.status=true;
-    resolve(response)
-}
-else
-{
-    console.log("app exisys",appExists);
-    response.status=false
-    resolve(response)
-}
-         
-     }
-     else
-     {
-        db.get().collection(APP_COLLECTION).insertOne({userId:userId,appName:[appdata],date:date,time:time})
-      response.status=true
-        resolve(response)
-     }
-     
-     })
+          )
+          .then(() => {
+            resolve();
+          });
+      } else {
+        db.get()
+          .collection("schedule")
+          .insertOne({ userId: userId, schedule: [scheduleObj] })
+          .then(() => {
+            resolve();
+          });
+      }
+    });
+  },
 
+  getAllSchedules: (userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection("schedule")
+        .findOne({ userId: userId })
+        .then((result) => {
+          resolve(result.schedule);
+        });
+    });
+  },
 
-    },
+  applyRestriction: (userId) => {
+    db.get()
+      .collection(APP_COLLECTION)
+      .update(
+        {
+          userId: userId,
+          appName: {
+            $elemMatch: {
+              type: "scheduled",
+            },
+          },
+        },
+        {
+          $set: {
+            "appName.$.status": "blocked",
+          },
+        }
+      );
+  },
 
-    getAllApplications:(userId)=>{
-        return new Promise((resolve,reject)=>{
-            db.get().collection(APP_COLLECTION).findOne({userId:userId}).then((result)=>{
-    
-                resolve(result.appName)
-            })
-        })
-    }
+  matchSchedule: (userId, date, time) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection("schedule")
+        .aggregate([
+          {
+            $match: {
+              userId: userId,
+            },
+          },
+          {
+            $unwind: "$schedule",
+          },
+          {
+            $project: {
+              schedule: 1,
+            },
+          },
 
-
-
-}
-
+          {
+              $match:
+              {
+                  $or:[
+                      {
+                          fromTime:{
+                              $gte:time
+                          }
+                      },
+                      {
+                          toTime:{
+                              $lte:time
+                          }
+                      }
+                  ]
+              }
+          },
+          
+        ])
+        .toArray()
+        .then((result) => {
+          console.log(result);
+        });
+    });
+  },
+};
