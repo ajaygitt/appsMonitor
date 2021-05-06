@@ -16,7 +16,14 @@ const verifyLoggedIn = (req, res, next) => {
 
 /* GET home page. */
 router.get("/", verifyLoggedIn, function (req, res, next) {
-  res.render("index", { title: "Express" });
+
+  console.log(req.session.user);
+userController.getAllApplications(req.session.user).then((applications)=>{
+
+console.log("yty",applications);
+  res.render("index",{applications});
+
+})
 });
 
 router.get("/login", (req, res) => {
@@ -25,7 +32,18 @@ router.get("/login", (req, res) => {
 
 router.post('/login',(req,res)=>{
   console.log("this",req.body);
-  userController
+  userController.userLogin(req.body).then((response)=>{
+
+    if(response.status===true)
+{
+  req.session.user=response.user
+  res.send(response)
+}
+else
+{
+  res.send(response)
+}
+  })
 })
 
 router.get("/signup", (req, res) => {
@@ -36,7 +54,7 @@ router.get("/signup", (req, res) => {
 router.post("/signup", (req, res) => {
   userController.registerUser(req.body).then((response) => {
     if (response.status == true) {
-      req.session.user = response.user;
+      req.session.user = response.userId;
       res.send(response);
     } else {
       res.send(response);
@@ -44,7 +62,16 @@ router.post("/signup", (req, res) => {
   });
 });
 
+router.post('/addApplication',(req,res)=>{
 
+  let userId=req.session.user
+  
+  userController.addApplicaton(req.body,userId).then((response)=>{
+
+    res.send(response)
+
+  })
+})
 
 
 
