@@ -3,6 +3,11 @@ const moment = require("moment");
 const { applyRestriction } = require("../controllers/userController");
 var router = express.Router();
 const userController = require("../controllers/userController");
+
+
+
+
+
 // middleware for checking session
 
 const verifyLoggedIn = (req, res, next) => {
@@ -22,11 +27,29 @@ const restrictApplicaton=(req,res,next)=>{
   let user=req.session.user
   let date=moment(new Date()).format('ddd')
   console.log("the date us",date);
-  let time=moment(new Date()).format('HH:MM')
+  let time=moment(new Date()).format('HH:mm')
   console.log("the time us",time);
 
+console.log(user);
+  let match= userController.matchSchedule(user,date,time).then(async(result)=>{
+    console.log("fjkdsa",result);
 
-  let match= userController.matchSchedule(user,date,time)
+    if(result.length!=0)
+    {
+      console.log("successsss");
+
+ userController.blockApplication(user)
+
+next()
+
+    }
+    else
+    {
+      userController.unBlockApplication(user)
+
+      next()
+    }
+  })
 }
 
 
@@ -38,7 +61,7 @@ const restrictApplicaton=(req,res,next)=>{
 
 
 /* GET home page. */
-router.get("/", verifyLoggedIn,restrictApplicaton, function (req, res, next) {
+router.get("/",verifyLoggedIn,restrictApplicaton,  function (req, res, next) {
 
   console.log(req.session.user);
 userController.getAllApplications(req.session.user).then(async(applications)=>{
@@ -105,13 +128,18 @@ router.post('/addSchedule',(req,res)=>{
 console.log(len);
 
 
-// days.forEach(element => {
-//   console.log("dh",element);
-// });
+day1 =days[0];
+day2=days[1]
+day3=days[2]
+day4=days[3]
+day5=days[4]
+day6=days[5]
+day7=days[6]
+
 
 let userId=req.session.user
 
-userController.addSchedule(req.body,userId).then(()=>{
+userController.addSchedule(req.body,day1,day2,day3,day4,day5,day6,day7,userId).then(()=>{
 
   res.redirect('/')
 

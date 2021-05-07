@@ -136,12 +136,18 @@ module.exports = {
     });
   },
 
-  addSchedule: (data, userId) => {
+  addSchedule: (data,day1,day2,day3,day4,day5,day6,day7, userId) => {
     return new Promise(async (resolve, reject) => {
       let scheduleObj = {
         fromTime: data.fromTime,
         toTime: data.toTime,
-        dates: data.days,
+        day1:day1,
+        day2:day2,
+        day3:day3,
+        day4:day4,
+        day5:day5,
+        day6:day6,
+        day7:day7
       };
 
       let exist = await db
@@ -181,7 +187,13 @@ module.exports = {
         .collection("schedule")
         .findOne({ userId: userId })
         .then((result) => {
+            if(result)
+
           resolve(result.schedule);
+          else
+          {
+              resolve()
+          }
         });
     });
   },
@@ -209,45 +221,167 @@ module.exports = {
   matchSchedule: (userId, date, time) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection("schedule")
-        .aggregate([
-          {
-            $match: {
-              userId: userId,
-            },
-          },
-          {
-            $unwind: "$schedule",
-          },
-          {
-            $project: {
-              schedule: 1,
-            },
-          },
+        .collection("schedule").aggregate([
 
           {
-              $match:
-              {
-                  $or:[
-                      {
-                          fromTime:{
-                              $gte:time
-                          }
-                      },
-                      {
-                          toTime:{
-                              $lte:time
-                          }
-                      }
-                  ]
-              }
+            $match:{
+              userId:userId
+            }
           },
+          {
+            $unwind:'$schedule'
+          },
+          {
+             $project:
+             {
+               fromTime:'$schedule.fromTime',
+               toTime:'$schedule.toTime',
+               date1:'$schedule.day1',
+               date2:'$schedule.day2',
+               date3:'$schedule.day3',
+               date4:'$schedule.day4',
+               date5:'$schedule.day5',
+               date6:'$schedule.day6',
+               date7:'$schedule.day7'
+               
+             }
+          },
+
+         {
           
+             $match:
+            {
+              fromTime:{
+                $lte:time
+              },
+              
+              
+            }
+
+         },
+{
+  $match:
+  {
+    toTime:{
+      $gte:time
+    }
+  }
+},
+{
+
+  $match:
+  {
+    $or:[
+      {
+        date1:date
+      },
+      {
+        date2:date
+      },
+      {
+        date3:date
+      },
+      {
+        date:date
+      },
+      {
+        date1:date
+      },
+      {
+        date1:date
+      },
+      {
+        date1:date
+      }
+
+    ]
+  }
+},
+
+
+
+        {
+          $project:
+          {
+            fromTime:1,
+          toTime:1,
+          date1:1,
+          date2:1,
+          date3:1,
+          date4:1,
+          date5:1,
+          date6:1,
+          date7:1
+
+
+          }
+        }
         ])
+
+
+
         .toArray()
         .then((result) => {
           console.log(result);
+          resolve(result)
         });
     });
   },
+
+
+
+
+
+
+
+  blockApplication:(userId)=>{
+    return new Promise((resolve,reject)=>{
+
+      db.get().collection(APP_COLLECTION).update(
+        
+        {
+userId:userId
+      },
+      {
+        $set:{
+          'appName.$[d].status':1
+        }        
+      },
+      {
+        arrayFilters:[{'d.type':'scheduled'}]
+      }
+      
+      
+      ).then((result)=>{
+        console.log("the result is ",result);
+      })
+    })
+  },
+
+
+
+
+  unBlockApplication:(userId)=>{
+    return new Promise((resolve,reject)=>{
+
+      db.get().collection(APP_COLLECTION).update(
+        
+        {
+userId:userId
+      },
+      {
+        $set:{
+          'appName.$[d].status':0
+        }        
+      },
+      {
+        arrayFilters:[{'d.type':'scheduled'}]
+      }
+      
+      
+      ).then((result)=>{
+        console.log("the result is ",result);
+      })
+    })
+  }
 };

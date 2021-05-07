@@ -205,33 +205,34 @@
         <div class="card-body">
 
           <div class="row">
+            
             <span class="dot" id="monday">
-              <p class="text-inside">M</p>
+              <p class="text-inside">{{this.day1}} </p>
             </span>
             <span class="dot" id="tuesday">
-              <p class="text-inside"> T </p>
+              <p class="text-inside"> {{this.day2}} </p>
             </span>
             <span class="dot" id="wednesday">
-              <p class="text-inside">W</p>
+              <p class="text-inside">{{this.day3}}</p>
             </span>
             <span class="dot" id="thursday">
-              <p class="text-inside">T</p>
+              <p class="text-inside">{{this.day4}}</p>
             </span>
 
             <span class="dot" id="friday">
-              <p class="text-inside">F</p>
+              <p class="text-inside">{{this.day5}}</p>
             </span>
             <span class="dot" id="saturday">
-              <p class="text-inside">S</p>
+              <p class="text-inside">{{this.day6}}</p>
             </span>
 
             <span class="dot" id="sunday">
-              <p class="text-inside">S</p>
+              <p class="text-inside">{{this.day7}}</p>
             </span>
           </div>
 
-          <p class="card-text"> From : {{this.fromTime}}  To:{{this.toTime}} </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <p class="card-text" style="margin-top: 5%;"> From : {{this.fromTime}}  To:{{this.toTime}} </p>
+          {{!-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
         </div>
       </div>
       {{/each}}
@@ -474,6 +475,9 @@
   .text-inside {
 
     margin-left: 25%;
+    text-align: center;
+    font-size: smaller;
+    display: inline-block;
 
   }
 
