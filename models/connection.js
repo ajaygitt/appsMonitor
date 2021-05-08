@@ -5,7 +5,7 @@ const state = {
 }
 
 module.exports.connect = function(done){
-    const url = 'mongodb://localhost:27017'
+    const url = 'mongodb+srv://ajay:ajay@cluster0.l3mbn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
     const dbname = 'appsMonitor'
    
     mongoClient.connect(url,(err,data)=>{

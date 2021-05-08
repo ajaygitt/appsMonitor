@@ -31,7 +31,7 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <h4><a class="navbar-brand" href="#">Home</a></h4>
+  <h4><a class="navbar-brand" href="/">Home</a></h4>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
     aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -104,7 +104,7 @@
           <th>Application Name</th>
           <th>Package name</th>
           <th>added on</th>
-          <th> delete </th>
+        
         </tr>
       </thead>
       <tbody>
@@ -113,7 +113,7 @@
           <td>{{this.appName}}</td>
           <td>{{this.packageName}}</td>
           <td>{{this.date}} @ {{this.time}}</td>
-          <td> <button class="btn " onclick="deleteApp()">delete</button> </td>
+         
         </tr>
         {{/each}}
       </tbody>
@@ -331,13 +331,20 @@
   function restrictions() {
     $('#schedules').hide()
     $('#restrictions').show()
-
+ $('#home').hide()
 
   }
   function addNewApplication() {
 
     alert('')
   }
+
+
+
+
+
+
+
 
   //datatable
 

@@ -69,7 +69,7 @@ userController.getAllApplications(req.session.user).then(async(applications)=>{
 
   let schedules=await userController.getAllSchedules(req.session.user)
   let blockedApps=await userController.blockApplicationsList(req.session.user)
-console.log(blockedApps,"@@");
+
 
 
   res.render("index",{applications,schedules,blockedApps});
@@ -149,6 +149,7 @@ userController.addSchedule(req.body,day1,day2,day3,day4,day5,day6,day7,userId).t
 
 })
 })
+
 
 
 
