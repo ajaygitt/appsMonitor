@@ -32,7 +32,7 @@ const restrictApplicaton=(req,res,next)=>{
 
 console.log(user);
   let match= userController.matchSchedule(user,date,time).then(async(result)=>{
-    console.log("fjkdsa",result);
+
 
     if(result.length!=0)
     {
@@ -127,11 +127,16 @@ router.post('/addApplication',(req,res)=>{
 router.post('/addSchedule',(req,res)=>{
 
   console.log("%%%",req.body);
+
+
  let days= req.body.days
+
+ var isArraycheck=Array.isArray(days)
+console.log("checking if array",isArraycheck);
+
+ if(isArraycheck)
+ {
  let len=days.length
-console.log(len);
-
-
 day1 =days[0];
 day2=days[1]
 day3=days[2]
@@ -139,6 +144,22 @@ day4=days[3]
 day5=days[4]
 day6=days[5]
 day7=days[6]
+
+
+ }
+ else
+ {
+   days1=days
+   days2=null;
+   days3=null;
+   days4=null;
+   days5=null;
+   days6=null;
+   days7=null;
+  
+ }
+
+
 
 
 let userId=req.session.user
@@ -151,6 +172,11 @@ userController.addSchedule(req.body,day1,day2,day3,day4,day5,day6,day7,userId).t
 })
 
 
+
+router.get('/logout',(req,res)=>{
+  req.session.destroy();
+  res.redirect('/')
+})
 
 
 

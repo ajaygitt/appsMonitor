@@ -322,7 +322,7 @@ module.exports = {
 
         .toArray()
         .then((result) => {
-          console.log(result);
+   
           resolve(result)
         });
     });
