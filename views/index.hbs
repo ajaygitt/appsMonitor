@@ -16,6 +16,17 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
+{{!-- toggle cdn --}}
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+
+
+
+
+
+
+
 
 
 
@@ -250,70 +261,52 @@
 
   <div id="restrictions" style="display:none">
 
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12 ">
-          <nav>
-            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-              <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
-                aria-controls="nav-home" aria-selected="true">Home</a>
-              <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
-                aria-controls="nav-profile" aria-selected="false">Profile</a>
-              <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
-                aria-controls="nav-contact" aria-selected="false">Contact</a>
-              <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab"
-                aria-controls="nav-about" aria-selected="false">About</a>
-            </div>
-          </nav>
-          <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-              x labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
-              incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
-              aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
-              do
-              nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
-              sit
-              culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
-              duis
-              occaecat ex.
-            </div>
+    
 
 
 
+ <table id="example" class="table table-striped table-bordered" style="width:100%">
+      <thead>
+        <tr>
+          <th>Working time</th>
+        
+          <th> Non-Working Time </th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each blockedApps}}
+        <tr>
 
-            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-              aaaaaaaaaaaaaaa
-            </div>
-            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-              aaaaaaaaaaaateur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam
-              incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing
-              aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis
-              do
-              nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit
-              sit
-              culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad
-              duis
-              occaecat ex.
-            </div>
-
-
-
-            <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-              Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat
-              veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit
-              non
-              irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim
-              occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit.
-              Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit
-              occaecat anim ullamco ad duis occaecat ex.
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
+          <div class="row">
+          <td>{{this.appName}}
+            <div class="form-check form-switch">
+  <label class="switch">
+  <input type="checkbox" checked>
+  <span class="slider round"></span>
+</label>
 </div>
+         </div>   
+             </td>
+        </tr>
+        {{/each}}
+      </tbody>
+
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </div>
@@ -358,6 +351,13 @@
   $(function () {
     $('.selectpicker').selectpicker();
   });
+
+  $(function() {
+    $('#toggle-two').bootstrapToggle({
+      on: 'blocked',
+      off: 'unblocked'
+    });
+  })
 
 
 
@@ -472,6 +472,78 @@
 
 </div>
 <style>
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+
+
+
+
+
+
+
   .text-inside {
 
     margin-left: 25%;

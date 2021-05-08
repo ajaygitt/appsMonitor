@@ -49,6 +49,7 @@ next()
 
       next()
     }
+  
   })
 }
 
@@ -67,8 +68,11 @@ router.get("/",verifyLoggedIn,restrictApplicaton,  function (req, res, next) {
 userController.getAllApplications(req.session.user).then(async(applications)=>{
 
   let schedules=await userController.getAllSchedules(req.session.user)
-  console.log("ss",schedules);
-  res.render("index",{applications,schedules});
+  let blockedApps=await userController.blockApplicationsList(req.session.user)
+console.log(blockedApps,"@@");
+
+
+  res.render("index",{applications,schedules,blockedApps});
 
 })
 });

@@ -383,5 +383,43 @@ userId:userId
         console.log("the result is ",result);
       })
     })
+  },
+
+
+  blockApplicationsList:(userId)=>{
+    return new Promise((resolve,reject)=>{
+      db.get().collection(APP_COLLECTION).aggregate([
+
+{
+  $match:
+  {
+    userId:userId
   }
+},
+{
+  $unwind:'$appName'
+},
+{
+  $project:
+  {
+    appName:'$appName.appName',
+
+    status:'$appName.status',
+    packageName:'$appName.packageName'
+  }
+},
+{
+  $match:
+  {
+    status:1
+  }
+}
+      ]).toArray().then((result)=>{
+
+   resolve(result)
+      })
+    })
+  }
+
+
 };
